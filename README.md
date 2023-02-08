@@ -9,4 +9,9 @@ For this assigmnet I used Node.JS, Inquirer and MYSQL2 to develop the applicatio
 
 USAGE
 -------------------------------------------------------------------
-Application is run by executing 'node index.js'.  This will display a main menu with a list of commands that can be executed to input data.  
+Application is run by executing 'node index.js'.  This will display a main menu with a list of commands that can be executed to input data.  The application will allow users to aad, edit, remove employees, managers and roles.
+
+INSTALLATION
+-------------------------------------------------------------------
+To start application run 'node index.js'
+To view database from MYSQL 'mysql -u root -p'
