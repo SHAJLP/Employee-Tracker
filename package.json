@@ -4,20 +4,19 @@
     "description": "MYSQL command line for tracking employess ",
     "main": "server.js",
     "scripts": {
-      "test": "n/a"
+        "test": "n/a"
     },
     "repository": {
-      "type": "git",
-      "url": "Employee-Tracker"
+        "type": "git",
+        "url": "Employee-Tracker"
     },
     "author": "Sophia Altaf",
     "license": "MIT",
     "dependencies": {
-
-      "mysql2": "^3.1.0", 
-      "express": "^4.18.2",
-      "inquirer": "^8.2.4",
-      "console.table": "^0.10.0"
-      
+        "console.table": "^0.10.0",
+        "dotenv": "^16.0.3",
+        "express": "^4.18.2",
+        "inquirer": "^8.2.4",
+        "mysql2": "^3.1.0"
     }
-  }
+}
