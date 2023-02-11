@@ -9,10 +9,11 @@
     },
     "repository": {
         "type": "git",
-        "url": "Employee-Tracker-SHAJLP"
+        "url": "Employee-Tracker-SHAJLP",
+        "author": "Sophia Altaf",
+        "license": "MIT"
     },
-    "author": "Sophia Altaf",
-    "license": "MIT",
+    
     "dependencies": {
         "console.table": "^0.10.0",
         "dotenv": "^16.0.3",

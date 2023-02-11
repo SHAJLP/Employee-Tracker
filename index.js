@@ -231,16 +231,18 @@ addAnEmployee = () => {
                 }, 
                 (err, res) => {
                     if (err) throw err;
-                })
-                db.query(`INSERT INTO role SET ?`, 
-                {
-                    depart_id: response.role,
-                }, 
-                (err, res) => {
-                    if (err) throw err;
                     console.log(`\n ${response.firstName} ${response.lastName} successfully added to database! \n`);
                     startApp();
                 })
+                // db.query(`INSERT INTO role SET ?`, 
+                // {
+                //     depart_id: response.role,
+                // }, 
+                // (err, res) => {
+                //     if (err) throw err;
+                //     console.log(`\n ${response.firstName} ${response.lastName} successfully added to database! \n`);
+                //     startApp();
+                // })
             })
         })
     })
