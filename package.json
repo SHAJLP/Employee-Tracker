@@ -1,18 +1,4 @@
-{
-
-    "name": "employee-tracker",
-    "version": "1.0.0",
-    "description": "MYSQL command line for tracking employess ",
-    "main": "server.js",
-    "scripts": {
-        "test": "n/a"
-    },
-    "repository": {
-        "type": "git",
-        "url": "Employee-Tracker-SHAJLP",
-        "author": "Sophia Altaf",
-        "license": "MIT"
-    },
+{   
     
     "dependencies": {
         "console.table": "^0.10.0",

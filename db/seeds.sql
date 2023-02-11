@@ -1,4 +1,4 @@
-<--departments-->
+--departments--
 
 INSERT INTO department (name)
 VALUES
@@ -7,7 +7,7 @@ VALUES
 ('Engineering'),
 ('Finance');
 
-<--roles, salary and id-->
+--roles, salary and id--
 INSERT INTO role (title,salary, department-id)
 VALUES
 ('Lead Software Engineer',135000,1),
@@ -19,7 +19,7 @@ VALUES
 ('Head of Finance', 195000, 4),
 ('Accountant', 135000, 4);
 
-<--employee names, roles, dept id-->
+--employee names, roles, dept id--
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES
 ('Chaoxiang', 'Liu', 1, NULL),
