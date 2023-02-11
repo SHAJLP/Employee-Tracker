@@ -15,7 +15,7 @@ const db = mysql.createConnection({
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
 },
-console.log(`Connected to the EmployeeTracker_db database.`)
+console.log(`Connected to the employeeTracker_db database.`)
 );
 
 db.connect((err) =>{

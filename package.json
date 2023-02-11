@@ -1,4 +1,5 @@
 {
+
     "name": "employee-tracker",
     "version": "1.0.0",
     "description": "MYSQL command line for tracking employess ",
@@ -8,7 +9,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "Employee-Tracker"
+        "url": "Employee-Tracker-SHAJLP"
     },
     "author": "Sophia Altaf",
     "license": "MIT",
