@@ -1,4 +1,4 @@
-// ICreating dependencies
+// Import and require packages
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const ctable = require('console.table');
@@ -15,7 +15,7 @@ const db = mysql.createConnection({
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
 },
-console.log(`Connected to the employee_db database.`)
+console.log(`Connected to the EmployeeTracker_db database.`)
 );
 
 db.connect((err) =>{
@@ -23,17 +23,15 @@ db.connect((err) =>{
     console.log(`Connected as id ${db.threadId} \n`);
     startApp();
 });
-
+// Creating the function for inquirer prompts to manage a company's employee database
 startApp = () => {
     inquirer.prompt([
         {
-            //Begin Command line
             name:'initialInquiry',
             type: 'rawlist',
             message: 'Welcome to the employee management program. What would you like to do?',
             choices: ['View all departments', 'View all roles', 'View all employees', 'View all employees by manager', 'Add a department', 'Add a role', 'Add an employee', 'Update employee\'s role', 'Update employee\'s manager', 'Remove a department', 'Remove a role', 'Remove an employee', 'View total salary of department', 'Exit program']
         }
-
     ]).then((response) => {
         switch (response.initialInquiry){
             case 'View all departments':
@@ -47,74 +45,77 @@ startApp = () => {
                     break;
                 case 'View all employees by manager':
                     viewAllEmployeesByManager();
-                break;
+                    break;
                 case 'Add a department':
                     addADepartment();
-                break;
+                    break;
                 case 'Add a role':
                     addARole();
-                break;
+                    break;
                 case 'Add an employee':
                     addAnEmployee();
-                break;
+                    break;
                 case 'Update employee\'s role':
                     updateEmployeeRole();
-                break;
+                    break;
                 case 'Update employee\'s manager':
                     updateEmployeesManager();
-                break;
+                    break;
                 case 'Remove a department':
                     removeADepartment();
-                break;
+                    break;
                 case 'Remove a role':
                     removeARole();
-                break;
+                    break;
                 case 'Remove an employee':
                     removeAnEmployee();
-                break;
+                    break;
                 case 'View total salary of department':
                     viewDepartmentSalary();
-                break;
+                    break;
                 case 'Exit program':
                     db.end();
                     console.log('\n You have exited the employee management program. Thanks for using! \n');
                     return;
-                default:
+                 default:
                     break;
             
         }
     })
 }
-//Views all departments in table
  viewAllDepartments = () => {
-    db.query(`SELECT * FROM department ORDER BY id ASC;`, (err,res) => {
+    // Query database
+    db.query(`SELECT * FROM department ORDER BY dept_id ASC;`, (err,res) => {
         if(err) throw err;
         console.table('\n', res, '\n');
         startApp();
 
     })
  };
- //Views all roles in table
  viewAllRoles = () => {
-    db.query(`SELECT e role.role_id, role.title, role.salary, department.name, department.id FROM role JOIN department ON role.department_id = department.id ORDER BY role.id ASC;`, (err, res) => {
+   // Query database
+    db.query(`SELECT role.role_id, role.title, role.salary, department.dept_name, department.dept_id FROM role JOIN department ON role.depart_id = department.dept_id ORDER BY role.role_id ASC;`, (err, res) => {
         if (err) throw err;
         console.table('\n', res, '\n');
         startApp();
     })
 };
-//Views all employees
+
 viewAllEmployees = () => {
-    db.query(`SELECT id, e.first_name, e.last_name, role.title, department.name, role.salary, CONCAT(m.first_name, ' ', m.last_name) manager FROM employee m RIGHT JOIN employee e ON e.manager_id = m.id JOIN role ON e.role_id = role.role_id JOIN department ON department.id = role.department_id ORDER BY e.id ASC;`, (err, res) => {
+    // Query database
+    db.query(`SELECT e.emp_id, e.first_name, e.last_name, role.title, department.dept_name, role.salary, CONCAT(m.first_name, ' ', m.last_name) manager FROM employee m RIGHT JOIN employee e ON e.manager_id = m.emp_id JOIN role ON e.rolee_id = role.role_id JOIN department ON department.dept_id = role.depart_id ORDER BY e.emp_id ASC;`, (err, res) => {
         if (err) throw err;
         console.table('\n', res, '\n');
         startApp();
     })
 };
-//Views all managers
+
 viewAllEmployeesByManager = () => {
-    db.query(`SELECT id, first_name, last_name FROM employee ORDER BY id ASC;`, (err, res) => {
+    // Query database
+    db.query(`SELECT emp_id, first_name, last_name FROM employee ORDER BY emp_id ASC;`, (err, res) => {
         if (err) throw err;
-        let managers = res.map(employee => ({name: employee.first_name + ' ' + employee.last_name, value: employee.id }));
+        let managers = res.map(employee => ({name: employee.first_name + ' ' + employee.last_name, value: employee.emp_id }));
+        //inquirer prompt for the manager
         inquirer.prompt([
             {
             name: 'manager',
@@ -123,7 +124,8 @@ viewAllEmployeesByManager = () => {
             choices: managers   
             },
         ]).then((response) => {
-            db.query(`SELECT e.id, e.first_name, e.last_name, role.title, department.name, role.salary, CONCAT(m.first_name, ' ', m.last_name) manager FROM employee m RIGHT JOIN employee e ON e.manager_id = m.id JOIN role ON e.id = role.id JOIN department ON department.id = role.department_id WHERE e.manager_id = ${response.manager} ORDER BY e.id ASC`, 
+            //query for the all employees of the manager 
+            db.query(`SELECT e.emp_id, e.first_name, e.last_name, role.title, department.dept_name, role.salary, CONCAT(m.first_name, ' ', m.last_name) manager FROM employee m RIGHT JOIN employee e ON e.manager_id = m.emp_id JOIN role ON e.rolee_id = role.role_id JOIN department ON department.dept_id = role.depart_id WHERE e.manager_id = ${response.manager} ORDER BY e.emp_id ASC`, 
             (err, res) => {
                 if (err) throw err;
                 console.table('\n', res, '\n');
@@ -132,8 +134,11 @@ viewAllEmployeesByManager = () => {
         })
     })
 }
-//Adding a department
+
+
+
 addADepartment = () => {
+    //inquirer prompt for new department
     inquirer.prompt([
         {
         name: 'newDept',
@@ -141,9 +146,10 @@ addADepartment = () => {
         message: 'What is the name of the department you want to add?'   
         }
     ]).then((response) => {
+        //query for adding the department value
         db.query(`INSERT INTO department SET ?`, 
         {
-            name: response.newDept,
+            dept_name: response.newDept,
         },
         (err, res) => {
             if (err) throw err;
@@ -152,11 +158,13 @@ addADepartment = () => {
         })
     })
 };
-//Adding a role to a department
+
 addARole = () => {
+    // Query database
     db.query(`SELECT * FROM department;`, (err, res) => {
         if (err) throw err;
-        let departments = res.map(department => ({name: department.name, value: department.id }));
+        let departments = res.map(department => ({name: department.dept_name, value: department.dept_id }));
+        //inquirer prompt for new role details
         inquirer.prompt([
             {
             name: 'title',
@@ -175,11 +183,12 @@ addARole = () => {
             choices: departments
             },
         ]).then((response) => {
+            //query for adding the role values
             db.query(`INSERT INTO role SET ?`, 
             {
                 title: response.title,
                 salary: response.salary,
-                department_id: response.deptName,
+                depart_id: response.deptName,
             },
             (err, res) => {
                 if (err) throw err;
@@ -189,15 +198,16 @@ addARole = () => {
         })
     })
 };
-//Adding an employee to the department
 
 addAnEmployee = () => {
+    // Query database
     db.query(`SELECT * FROM role;`, (err, res) => {
         if (err) throw err;
-        let roles = res.map(role => ({name: role.title, value: role.id }));
+        let roles = res.map(role => ({name: role.title, value: role.role_id }));
         db.query(`SELECT * FROM employee;`, (err, res) => {
             if (err) throw err;
-            let employees = res.map(employee => ({name: employee.first_name + ' ' + employee.last_name, value: employee.id}));
+            let employees = res.map(employee => ({name: employee.first_name + ' ' + employee.last_name, value: employee.emp_id}));
+            //inquirer prompt for new employee details
             inquirer.prompt([
                 {
                     name: 'firstName',
@@ -210,9 +220,9 @@ addAnEmployee = () => {
                     message: 'What is the new employee\'s last name?'
                 },
                 {
-                    name: 'role',
+                    name: 'rolee',
                     type: 'rawlist',
-                    message: 'What is the new employee\'s title?',
+                    message: 'What is the new employee\'s role title?',
                     choices: roles
                 },
                 {
@@ -222,11 +232,12 @@ addAnEmployee = () => {
                     choices: employees
                 }
             ]).then((response) => {
+                //query for adding the new employee values
                 db.query(`INSERT INTO employee SET ?`, 
                 {
                     first_name: response.firstName,
                     last_name: response.lastName,
-                    role_id: response.role,
+                    rolee_id: response.rolee,
                     manager_id: response.manager,
                 }, 
                 (err, res) => {
@@ -234,27 +245,21 @@ addAnEmployee = () => {
                     console.log(`\n ${response.firstName} ${response.lastName} successfully added to database! \n`);
                     startApp();
                 })
-                // db.query(`INSERT INTO role SET ?`, 
-                // {
-                //     depart_id: response.role,
-                // }, 
-                // (err, res) => {
-                //     if (err) throw err;
-                //     console.log(`\n ${response.firstName} ${response.lastName} successfully added to database! \n`);
-                //     startApp();
-                // })
+                
             })
         })
     })
 };
-//Updating employee role 
+
 updateEmployeeRole = () => {
+    // Query database
     db.query(`SELECT * FROM role;`, (err, res) => {
         if (err) throw err;
-        let roles = res.map(role => ({name: role.title, value: role.id }));
+        let roles = res.map(role => ({name: role.title, value: role.role_id }));
         db.query(`SELECT * FROM employee;`, (err, res) => {
             if (err) throw err;
-            let employees = res.map(employee => ({name: employee.first_name + ' ' + employee.last_name, value: employee.id }));
+            let employees = res.map(employee => ({name: employee.first_name + ' ' + employee.last_name, value: employee.emp_id }));
+           //inquirer prompt for updating the current employee role
             inquirer.prompt([
                 {
                     name: 'employee',
@@ -269,13 +274,14 @@ updateEmployeeRole = () => {
                     choices: roles
                 },
             ]).then((response) => {
+                // query for updating the current employee's role
                 db.query(`UPDATE employee SET ? WHERE ?`, 
                 [
                     {
-                        role_id: response.newRole,
+                        rolee_id: response.newRole,
                     },
                     {
-                        id: response.employee,
+                        emp_id: response.employee,
                     },
                 ], 
                 (err, res) => {
@@ -287,11 +293,13 @@ updateEmployeeRole = () => {
         })
     })
 }
-//Updating employees manager
+
 updateEmployeesManager = () => {
+    // Query database
     db.query(`SELECT * FROM employee;`, (err, res) => {
         if (err) throw err;
-        let employees = res.map(employee => ({name: employee.first_name + ' ' + employee.last_name, value: employee.id }));
+        let employees = res.map(employee => ({name: employee.first_name + ' ' + employee.last_name, value: employee.emp_id }));
+        //inquirer prompt for employee manager
         inquirer.prompt([
             {
                 name: 'employee',
@@ -306,13 +314,14 @@ updateEmployeesManager = () => {
                 choices: employees
             },
         ]).then((response) => {
+            // query for updating the employee's new manager
             db.query(`UPDATE employee SET ? WHERE ?`, 
             [
                 {
                     manager_id: response.newManager,
                 },
                 {
-                    id: response.employee,
+                    emp_id: response.employee,
                 },
             ], 
             (err, res) => {
@@ -323,11 +332,13 @@ updateEmployeesManager = () => {
         })
     })
 };
-//Removing department/s
+
 removeADepartment = () => {
-    db.query(`SELECT * FROM department ORDER BY id ASC;`, (err, res) => {
+    // Query database
+    db.query(`SELECT * FROM department ORDER BY dept_id ASC;`, (err, res) => {
         if (err) throw err;
-        let departments = res.map(department => ({name: department.name, value: department.id }));
+        let departments = res.map(department => ({name: department.dept_name, value: department.dept_id }));
+        //inquirer prompt to delete the which department
         inquirer.prompt([
             {
             name: 'deptName',
@@ -336,6 +347,7 @@ removeADepartment = () => {
             choices: departments
             },
         ]).then((response) => {
+            // Hardcoded query: DELETE FROM department where dept_id = user response
             db.query(`DELETE FROM department WHERE ?`, 
             [
                 {
@@ -350,11 +362,13 @@ removeADepartment = () => {
         })
     })
 }
-//Removing a role from the database
+
 removeARole = () => {
-    db.query(`SELECT * FROM role ORDER BY id ASC;`, (err, res) => {
+    // Query database
+    db.query(`SELECT * FROM role ORDER BY role_id ASC;`, (err, res) => {
         if (err) throw err;
-        let roles = res.map(role => ({name: role.title, value: role.id }));
+        let roles = res.map(role => ({name: role.title, value: role.role_id }));
+        //inquirer prompt to remove role
         inquirer.prompt([
             {
             name: 'title',
@@ -363,6 +377,7 @@ removeARole = () => {
             choices: roles
             },
         ]).then((response) => {
+            // Hardcoded query: DELETE FROM  role WHERE role_id= user response
             db.query(`DELETE FROM role WHERE ?`, 
             [
                 {
@@ -377,11 +392,13 @@ removeARole = () => {
         })
     })
 }
-//Removing an employee from database
+
 removeAnEmployee = () => {
-    db.query(`SELECT * FROM employee ORDER BY id ASC;`, (err, res) => {
+    // Query database
+    db.query(`SELECT * FROM employee ORDER BY emp_id ASC;`, (err, res) => {
         if (err) throw err;
-        let employees = res.map(employee => ({name: employee.first_name + ' ' + employee.last_name, value: employee.id }));
+        let employees = res.map(employee => ({name: employee.first_name + ' ' + employee.last_name, value: employee.emp_id }));
+        //inquirer prompt to remove an employee
         inquirer.prompt([
             {
                 name: 'employee',
@@ -390,10 +407,11 @@ removeAnEmployee = () => {
                 choices: employees
             },
         ]).then((response) => {
+            // Hardcoded query: DELETE FROM employee WHERE emp_id= user response
             db.query(`DELETE FROM employee WHERE ?`, 
             [
                 {
-                    id: response.employee,
+                    emp_id: response.employee,
                 },
             ], 
             (err, res) => {
@@ -404,11 +422,13 @@ removeAnEmployee = () => {
         })
     })
 }
-//Adding salary 
+
 viewDepartmentSalary = () => {
+    // Query database
     db.query(`SELECT * FROM department ORDER BY dept_id ASC;`, (err, res) => {
         if (err) throw err;
-        let departments = res.map(department => ({name: department.name, value: department.id }));
+        let departments = res.map(department => ({name: department.dept_name, value: department.dept_id }));
+        //inquirer prompt to select the department for calculating the sum of the salaries
         inquirer.prompt([
             {
             name: 'deptName',
@@ -417,10 +437,11 @@ viewDepartmentSalary = () => {
             choices: departments
             },
         ]).then((response) => {
-            db.query(`SELECT department_id, SUM(role.salary) AS total_salary FROM role WHERE ?`, 
+          // Query for SUM of salary based on department id
+            db.query(`SELECT depart_id, SUM(role.salary) AS total_salary FROM role WHERE ?`, 
             [
                 {
-                    department_id: response.deptName,
+                    depart_id: response.deptName,
                 },
             ], 
             (err, res) => {
@@ -432,3 +453,4 @@ viewDepartmentSalary = () => {
         })
     })
 }
+
